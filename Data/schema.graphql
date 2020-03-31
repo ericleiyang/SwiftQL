@@ -1,0 +1,323 @@
+type BackgroundReading implements Content {
+  ancestor_id: ID!
+  ancestor_type: String!
+  article_excerpt: String!
+  article_header_img: String
+  article_id: Int!
+  article_publish_date: String!
+  article_title: String!
+  author_id: Int!
+  author_name: String!
+  author_img: String
+  comments_count: Int!
+  created_at: Timestamp!
+  id: ID!
+  permalink: String!
+  type: String!
+  updated_at: Timestamp!
+  user_id: Int!
+}
+
+type Channel {
+  id: ID!
+  created: Int!
+  is_private: Boolean!
+  name: String!
+  topic: String!
+}
+
+input ChannelInput {
+  name: String!
+  topic: String!
+}
+
+interface Content {
+  id: ID!
+  type: String!
+  created_at: Timestamp!
+  updated_at: Timestamp!
+  ancestor_id: ID!
+}
+
+enum ContentSearchEntityType {
+  article
+  discussion
+  podcast_episode
+}
+
+type ContentSearchResult {
+  article_author_id: Int
+  article_author_name: String
+  date: String!
+  entity_type: ContentSearchEntityType!
+  id: ID!
+  podcast_id: Int
+  podcast_image_url: String
+  podcast_mp3_url: String
+  podcast_name: String
+  title: String!
+}
+
+input CreateInsightInput {
+  instructions: String!
+  writer_ids: [ID!]!
+}
+
+input CreateMediaInput {
+  created_at: Timestamp!
+  id: ID!
+  image_height: Int
+  image_uri: String
+  image_width: Int
+  status: String
+  type: String
+  updated_at: Timestamp!
+}
+
+input CreateNewsInput {
+  allow_comments: Boolean!
+  blurb: String
+  headline: String!
+  image_uri: String
+  importance: NewsImportance!
+  smart_brevity: String
+  tags: NewsTagsInput!
+  tweets: [String]!
+}
+
+type Development implements Content {
+  ancestor_id: ID!
+  ancestor_type: String!
+  created_at: Timestamp!
+  id: ID!
+  text: String
+  type: String!
+  tweets: [String]!
+  updated_at: Timestamp!
+  user_id: ID!
+}
+
+type Game {
+  id: ID!
+  season: String
+  seasonType: Int
+  status: String
+  game_time: Timestamp
+  away_team_id: ID!
+  away_team_name: String
+  away_team_details: String
+  away_score: Int
+  home_team_id: ID!
+  home_team_name: String
+  home_team_details: String
+  home_score: Int
+}
+
+type Insight implements Content {
+  id: ID!
+  type: String!
+  created_at: Timestamp!
+  updated_at: Timestamp!
+  ancestor_id: ID!
+  audio: String
+  instructions: String
+  requestor_id: ID!
+  requestor_name: String
+  reviewer_id: ID!
+  reviewer_name: String
+  status: String!
+  submitted_at: Timestamp
+  submitter_id: ID!
+  submitter_name: String
+  text: String
+  writer_id: ID!
+  writer_name: String!
+}
+
+type League {
+  id: ID!
+  name: String
+  shortname: String
+  sport_type: String
+  title: String
+}
+
+type Media {
+  created_at: Timestamp!
+  id: ID!
+  image_height: Int
+  image_uri: String
+  image_width: Int
+  status: String
+  thumbnail_height: Int
+  thumbnail_uri: String
+  thumbnail_width: Int
+  type: String
+  updated_at: Timestamp!
+}
+
+type Mutation {
+  approveInsight(id: ID!): Insight!
+  createInsights(id: ID!, input: CreateInsightInput!): [Insight!]!
+  deleteInsight(id: ID!): Insight!
+  submitInsight(input: SubmitInsightInput!): Insight!
+  rejectInsight(id: ID!): Insight!
+  createMedia(input: CreateMediaInput!): Media!
+  updateMedia(input: UpdateMediaInput!): Media!
+  addBackgroundReadingToNews(input: NewsBackgroundReadingInput!): News!
+  createNews(input: CreateNewsInput!): News!
+  deleteNews(id: ID!): News!
+  removeBackgroundReadingFromNews(id: ID!): News!
+  updateNews(input: UpdateNewsInput!): News!
+  triggerNotifications(input: TriggerNotificationsInput!): Boolean!
+  createChannel(input: ChannelInput!): Channel!
+  inviteUsers(id: ID!, users: [SlackUserInput!]!): Boolean!
+}
+
+type News implements Node {
+  allow_comments: Boolean!
+  blurb: String
+  content: [Content]
+  created_at: Timestamp!
+  headline: String!
+  id: ID!
+  image_uri: String
+  importance: NewsImportance!
+  smart_brevity: String
+  status: String!
+  tags: NewsTags!
+  type: String!
+  updated_at: Timestamp!
+  user_id: Int!
+}
+
+input NewsBackgroundReadingInput {
+  ancestor_id: ID!
+  article_id: String!
+  text: String
+}
+
+enum NewsImportance {
+  important
+  standard
+}
+
+type NewsTags {
+  game: Tag
+  leagues: [Tag]!
+  players: [Tag]!
+  teams: [Tag]!
+}
+
+input NewsTagsInput {
+  game: TagInput
+  leagues: [TagInput]!
+  players: [TagInput]!
+  teams: [TagInput]!
+}
+
+interface Node {
+  id: ID!
+  type: String!
+  created_at: Timestamp!
+  updated_at: Timestamp!
+}
+
+type Player {
+  id: ID!
+  name: String
+  team: String
+}
+
+type Query {
+  insight(id: ID!): Insight!
+  media(filter: String): [Media]
+  newsById(id: ID!): News
+  news: [News]
+  closeGames(teams: [TeamInput]): [Game]
+  contentSearch(searchText: String!): [ContentSearchResult]!
+  leagues(order_by: String): [League]
+  playerSearch(searchText: String!): [Player]
+  staffSearch(searchText: String!): [WPUser]
+  teamSearch(searchText: String!): [Team]
+}
+
+input SlackUserInput {
+  slack_user_id: String!
+}
+
+input SubmitInsightInput {
+  id: ID!
+  text: String
+  audio: String
+}
+
+type Tag {
+  id: String!
+  title: String!
+  type: String!
+}
+
+input TagInput {
+  id: String!
+  title: String!
+  type: String!
+}
+
+type Team {
+  id: ID!
+  name: String
+  shortname: String
+  cityname: String
+  short_display_name: String
+  long_display_name: String
+  nickname: String
+  division: String
+  conference: String
+  url: String
+  status: String
+  last_edited: Timestamp
+  sport_type: String
+  league_title: String
+}
+
+input TeamInput {
+  id: ID!
+}
+
+# Timestamp type because GraphQL's Int doesn't support numbers beyond 32-bit, and
+# because they store SQL dates in the primary DB
+scalar Timestamp
+
+input TriggerNotificationsInput {
+  push_title: String!
+  push_message: String!
+  id: ID!
+}
+
+input UpdateMediaInput {
+  id: ID!
+  image_uri: String
+  status: String
+  updated_at: Timestamp!
+}
+
+input UpdateNewsInput {
+  allow_comments: Boolean
+  development_text: String
+  development_tweets: [String]
+  headline: String
+  id: ID!
+  image_uri: String
+  importance: NewsImportance
+  smart_brevity: String
+  tags: NewsTagsInput
+}
+
+type WPUser {
+  id: ID!
+  name: String!
+  role: String!
+  slack_user_id: String
+}
+

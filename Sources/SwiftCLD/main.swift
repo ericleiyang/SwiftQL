@@ -26,12 +26,8 @@ func main() {
                 }
 
                 let graphQLFile = splited[1].description
-                guard FileManager.default.fileExists(atPath: graphQLFile) else {
+                guard let data = FileHelper.read(from: graphQLFile) else {
                     return print("GraphQL schema doesn't exist at the path")
-                }
-                
-                guard let data = FileManager.default.contents(atPath: graphQLFile) else {
-                    return print("Couldn't read data from the GraphQL schema")
                 }
 
                 
